@@ -11,7 +11,7 @@ namespace DkSoftware.LojaVirtual.Web.Controllers
         public ActionResult Index()
         {
             _produtosRepository = new ProdutosRepository();
-            var produtos = _produtosRepository.Produtos.Take(3);
+            var produtos = _produtosRepository.Produtos;
 
             return View(produtos);
         }
