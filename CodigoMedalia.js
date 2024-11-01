@@ -34,7 +34,7 @@ _da_["intScripts"] = function () {
     }
 
     // Send Integration data to DXA
-    function sendIntegrationData(eventType, detail) {
+    const sendIntegrationData =(eventType, detail) {
       try {
         var m_nps;
         var m_fields = [];
@@ -3908,7 +3908,7 @@ _da_["fieldTitleCallback"] =
                         e
                       );
                 }),
-                document.querySelector("head").appendChild(e);
+                cachedSelector("head").appendChild(e);
             }),
           (t.activateHeatmap = function (e) {
             var t;
@@ -9940,93 +9940,37 @@ _da_["fieldTitleCallback"] =
                   : [[-1, e]]
                 : [[1, t]];
             }),
-            (p.prototype.diff_bisect_ = function (e, t, i) {
-              for (
-                var r = e.length,
-                  o = t.length,
-                  n = Math.ceil((r + o) / 2),
-                  s = n,
-                  a = 2 * n,
-                  l = new Array(a),
-                  d = new Array(a),
-                  c = 0;
-                c < a;
-                c++
-              )
-                (l[c] = -1), (d[c] = -1);
-              l[s + 1] = 0;
-              for (
-                var u = r - o,
-                  h = u % 2 != (d[s + 1] = 0),
-                  p = 0,
-                  f = 0,
-                  g = 0,
-                  m = 0,
-                  v = 0;
-                v < n && !(new Date().getTime() > i);
-                v++
-              ) {
-                for (var y = -v + p; y <= v - f; y += 2) {
-                  for (
-                    var S = s + y,
-                      b =
-                        (I =
-                          y == -v || (y != v && l[S - 1] < l[S + 1])
-                            ? l[S + 1]
-                            : l[S - 1] + 1) - y;
-                    I < r && b < o && e.charAt(I) == t.charAt(b);
-
-                  )
-                    I++, b++;
-                  if (r < (l[S] = I)) f += 2;
-                  else if (o < b) p += 2;
-                  else if (h) {
-                    var E = s + u - y;
-                    if (0 <= E && E < a && -1 != d[E])
-                      if ((C = r - d[E]) <= I)
-                        return this.diff_bisectSplit_(e, t, I, b, i);
+            (p.prototype.diff_bisect_ = function(e, t, i) {
+              var r = e.length, o = t.length, n = Math.ceil((r + o) / 2), s = n, a = 2 * n,
+                  l = Array(a).fill(-1), d = Array(a).fill(-1), u = r - o;
+              l[s + 1] = d[s + 1] = 0;
+              var f, h = u % 2 !== 0, m = new Date().getTime();
+          
+              for (let v = 0; v < n && m + i > new Date().getTime(); v++) {
+                  for (let y = -v; y <= v; y += 2) {
+                      let S = s + y, I = (y === -v || (y !== v && l[S - 1] < l[S + 1]) ? l[S + 1] : l[S - 1] + 1),
+                          b = I - y;
+                      while (I < r && b < o && e[I] === t[b]) I++, b++;
+                      if (I >= r) continue;
+                      l[S] = I;
+          
+                      if (h && (f = s + u - y) >= 0 && f < a && d[f] !== -1 && d[f] + I >= r) return this.diff_bisectSplit_(e, t, I, b, i);
+                  }          
+                  for (let _ = -v; _ <= v; _ += 2) {
+                      let C = s + _, T = (_ === -v || (_ !== v && d[C - 1] < d[C + 1]) ? d[C + 1] : d[C - 1] + 1),
+                          D = T - _;
+                      while (T < r && D < o && e[r - T - 1] === t[o - D - 1]) T++, D++;
+                      if (T >= r) continue;
+                      d[C] = T;
+          
+                      if (!h && (S = s + u - _) >= 0 && S < a && l[S] !== -1 && l[S] >= r - T) return this.diff_bisectSplit_(e, t, l[S], l[S] - y, i);
                   }
-                }
-                for (var _ = -v + g; _ <= v - m; _ += 2) {
-                  for (
-                    var C,
-                      E = s + _,
-                      T =
-                        (C =
-                          _ == -v || (_ != v && d[E - 1] < d[E + 1])
-                            ? d[E + 1]
-                            : d[E - 1] + 1) - _;
-                    C < r &&
-                    T < o &&
-                    e.charAt(r - C - 1) == t.charAt(o - T - 1);
-
-                  )
-                    C++, T++;
-                  if (r < (d[E] = C)) m += 2;
-                  else if (o < T) g += 2;
-                  else if (!h)
-                    if (0 <= (S = s + u - _) && S < a && -1 != l[S]) {
-                      var I,
-                        b = s + (I = l[S]) - S;
-                      if ((C = r - C) <= I)
-                        return this.diff_bisectSplit_(e, t, I, b, i);
-                    }
-                }
               }
-              return [
-                [-1, e],
-                [1, t],
-              ];
-            }),
-            (p.prototype.diff_bisectSplit_ = function (e, t, i, r, o) {
-              var n = e.substring(0, i),
-                s = t.substring(0, r),
-                e = e.substring(i),
-                i = t.substring(r),
-                t = this.diff_main(n, s, !1, o),
-                r = this.diff_main(e, i, !1, o);
-              return t.concat(r);
-            }),
+              return [[-1, e], [1, t]];
+          }),
+            p.prototype.diff_bisectSplit_ = function(e, t, i, r, o) {
+              return this.diff_main(e.slice(0, i), t.slice(0, r), !1, o).concat(this.diff_main(e.slice(i), t.slice(r), !1, o));
+          },
             (p.prototype.diff_commonPrefix = function (e, t) {
               if (!e || !t || e.charAt(0) != t.charAt(0)) return 0;
               for (
@@ -13418,5 +13362,5 @@ _da_["fieldTitleCallback"] =
         ((i = o[t] = { exports: {} }), r[t].call(i.exports, i, i.exports, e)),
       i.exports
     );
-  })(71) ;
+  })(71);
 })();
